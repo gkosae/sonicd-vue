@@ -1,28 +1,43 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1 class="banner">SonicD</h1>
+    <TaskForm></TaskForm>
+    <TaskTable></TaskTable>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TaskTable from "@/components/TaskTable";
+import TaskForm from "@/components/TaskForm";
 
 export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  name: "app",
+  components: { TaskTable, TaskForm },
+};
 </script>
 
 <style>
+body {
+  padding: 0;
+  margin: 0;
+}
+
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: Arial, Helvetica, sans-serif;
+}
+.el-main {
+  background: #eef1f4;
+}
+
+.banner {
+  width: 100%;
+  height: 150px;
+  line-height: 150px;
   text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  font-size: 70px;
+  font-family: "Segoe UI";
+  background: teal;
+  color: white;
+  margin: 0;
 }
 </style>
