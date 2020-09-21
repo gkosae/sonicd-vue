@@ -4,15 +4,6 @@
       <el-input v-model="task.url" placeholder="Paste URL Here"></el-input>
     </el-form-item>
     <el-form-item>
-      <!-- <el-select v-model="task.destination" placeholder="Destination">
-            <el-option
-              v-for="destination in destinations"
-              :key="destination"
-              :label="destination"
-              :value="destination"
-            ></el-option>
-      </el-select>-->
-
       <el-autocomplete
         class="inline-input"
         v-model="task.destination"
@@ -48,8 +39,6 @@ export default {
   },
   methods: {
     querySearch(queryString, cb) {
-      console.log("Query String: ", queryString);
-      console.log("Callback: ", cb);
       let destinations = this.destinations.map((dest) => {
         return { value: dest };
       });
