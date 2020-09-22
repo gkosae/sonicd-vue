@@ -19,6 +19,11 @@
     </el-header>
     <el-main>
       <el-table class="table" :data="tableData" style="width: 100%; padding: 20px;">
+        <el-table-column width="70" prop="status" label>
+          <template slot-scope="scope">
+            <TaskTableStatusTag :status="scope.row.status"></TaskTableStatusTag>
+          </template>
+        </el-table-column>
         <el-table-column prop="title" label="Title"></el-table-column>
         <el-table-column prop="url" label="Url">
           <template slot-scope="scope">
@@ -27,12 +32,7 @@
         </el-table-column>
         <el-table-column prop="destination" label="Destination"></el-table-column>
         <el-table-column prop="added" label="Added">
-          <template slot-scope="scope">{{moment(scope.row.added).format('MMMM Do YYYY, h:mm:ss a')}}</template>
-        </el-table-column>
-        <el-table-column prop="status" label="Status">
-          <template slot-scope="scope">
-            <el-tag effect="dark" :type="scope.row.status | elTagType">{{scope.row.status}}</el-tag>
-          </template>
+          <template slot-scope="scope">{{moment(scope.row.added).format('YYYY-MM-D HH:mm:ss')}}</template>
         </el-table-column>
       </el-table>
     </el-main>
@@ -42,12 +42,19 @@
 <script>
 import api from "@/api";
 import EventBus from "@/services/eventBus";
+import TaskTableStatusTag from "@/components/TaskTableStatusTag";
 
 export default {
   name: "TaskTable",
+  components: { TaskTableStatusTag },
   methods: {
     loadTasks() {
+      if (this.loading) {
+        return;
+      }
+
       this.loading = true;
+
       api
         .fetchTasks()
         .then((tasks) => {
@@ -65,27 +72,17 @@ export default {
     },
   },
   mounted() {
-    console.log(process.env);
     this.loadTasks();
+
+    setInterval(
+      function () {
+        this.loadTasks();
+      }.bind(this),
+      30000
+    );
   },
   created() {
-    EventBus.$on("TASK_CREATED", () => {
-      this.loadTasks();
-    });
-  },
-  filters: {
-    elTagType(status) {
-      switch (status) {
-        case "completed":
-          return "success";
-        case "in_progress":
-          return "warning";
-        case "failed":
-          return "danger";
-        default:
-          return "";
-      }
-    },
+    EventBus.$on("TASK_CREATED", () => this.loadTasks());
   },
   data() {
     return {

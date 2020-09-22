@@ -15,7 +15,7 @@
     <el-form-item>
       <el-button type="primary" @click="createTask" :disabled="importing">
         Import
-        <i class="el-icon-download el-icon-right"></i>
+        <i :class="importing ? 'el-icon-loading' : 'el-icon-download'"></i>
       </el-button>
     </el-form-item>
   </el-form>
