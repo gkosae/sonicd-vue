@@ -2,10 +2,10 @@ import axios from "axios";
 import { CURRENT_API_URL } from "@/constants";
 
 export default {
-  fetchTasks() {
+  fetchTasks(page = 1) {
     return new Promise((resolve, reject) => {
       axios
-        .get(`${CURRENT_API_URL}/tasks`)
+        .get(`${CURRENT_API_URL}/tasks?page=${page}`)
         .then(res => {
           if (res.data.success) {
             resolve(res.data.tasks)

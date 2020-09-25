@@ -74,13 +74,12 @@ export default {
 
       api
         .createTask(this.task)
-        .then(() => {
+        .then((task) => {
           this.$notify({
             title: "IMPORTING",
-            // message: err,
           });
 
-          EventBus.$emit("TASK_CREATED");
+          EventBus.$emit("TASK_CREATED", task);
         })
         .catch((err) =>
           this.$notify({

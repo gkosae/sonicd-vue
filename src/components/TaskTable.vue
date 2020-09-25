@@ -2,13 +2,13 @@
   <el-container>
     <el-header>
       <div class="flex-container">
-        <h1>Recent</h1>
+        <h1>Tasks</h1>
 
         <el-button
           id="load-tasks"
           @click="loadTasks"
-          :disabled="loading"
-          :icon="loading ? 'el-icon-loading' : 'el-icon-refresh'"
+          :disabled="reloading"
+          :icon="reloading ? 'el-icon-loading' : 'el-icon-refresh'"
           circle
         ></el-button>
       </div>
@@ -24,8 +24,12 @@
             <TaskTableStatusTag :status="scope.row.status"></TaskTableStatusTag>
           </template>
         </el-table-column>
-        <el-table-column prop="title" label="Title"></el-table-column>
-        <el-table-column prop="url" label="Url">
+        <el-table-column
+          min-width="200"
+          prop="title"
+          label="Title"
+        ></el-table-column>
+        <el-table-column min-width="200" prop="url" label="Url">
           <template slot-scope="scope">
             <el-link :href="scope.row.url" type="primary" target="_blank">{{
               scope.row.url
@@ -33,10 +37,11 @@
           </template>
         </el-table-column>
         <el-table-column
+          min-width="200"
           prop="destination"
           label="Destination"
         ></el-table-column>
-        <el-table-column prop="added" label="Added">
+        <el-table-column min-width="200" prop="added" label="Added">
           <template slot-scope="scope">{{
             moment(scope.row.added).format("YYYY-MM-D HH:mm:ss")
           }}</template>
@@ -54,28 +59,44 @@ import TaskTableStatusTag from "@/components/TaskTableStatusTag";
 export default {
   name: "TaskTable",
   components: { TaskTableStatusTag },
+  data() {
+    return {
+      reloading: false,
+      loadingTasks: false,
+      tasks: [],
+    };
+  },
   methods: {
     loadTasks() {
-      if (this.loading) {
-        return;
-      }
+      console.log("Loading Tasks");
+      this.reloading = true;
 
-      this.loading = true;
-
-      api
-        .fetchTasks()
-        .then((tasks) => {
-          this.tasks = tasks;
-        })
+      this.loadTasksSilently()
         .catch((err) =>
           this.$notify({
             title: "Error loading tasks",
             message: err,
           })
         )
-        .finally(() => {
-          this.loading = false;
-        });
+        .finally(() => (this.reloading = false));
+    },
+    loadTasksSilently() {
+      console.log("Loading tasks silently");
+      return new Promise((resolve, reject) => {
+        if (this.loadingTasks) return;
+        this.loadingTasks = true;
+
+        api
+          .fetchTasks()
+          .then((tasks) => {
+            const taskIds = this.tasks.map((task) => task.id);
+            tasks = tasks.filter((task) => !taskIds.includes(task.id));
+            this.tasks.unshift(...tasks);
+            resolve(tasks);
+          })
+          .catch((err) => reject(err))
+          .finally(() => (this.loadingTasks = false));
+      });
     },
   },
   mounted() {
@@ -83,19 +104,15 @@ export default {
 
     setInterval(
       function () {
-        this.loadTasks();
+        this.loadTasksSilently();
       }.bind(this),
       30000
     );
   },
   created() {
-    EventBus.$on("TASK_CREATED", () => this.loadTasks());
-  },
-  data() {
-    return {
-      loading: false,
-      tasks: [],
-    };
+    EventBus.$on("TASK_CREATED", (task) => {
+      this.tasks.unshift(task);
+    });
   },
   computed: {
     tableData() {
