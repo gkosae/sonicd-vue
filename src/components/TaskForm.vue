@@ -1,23 +1,37 @@
 <template>
   <el-form :inline="true" :model="task" class="form-container">
-    <el-form-item>
-      <el-input v-model="task.url" placeholder="Paste URL Here"></el-input>
-    </el-form-item>
-    <el-form-item>
-      <el-autocomplete
-        class="inline-input"
-        v-model="task.destination"
-        :fetch-suggestions="querySearch"
-        placeholder="Destination"
-        @select="handleSelect"
-      ></el-autocomplete>
-    </el-form-item>
-    <el-form-item>
-      <el-button type="primary" @click="createTask" :disabled="importing">
-        Import
-        <i :class="importing ? 'el-icon-loading' : 'el-icon-download'"></i>
-      </el-button>
-    </el-form-item>
+    <div class="flex-container">
+      <div id="url-input-wrapper" class="form-item-wrapper">
+        <el-input
+          id="url-input"
+          class="form-item"
+          v-model="task.url"
+          placeholder="Paste URL Here"
+        ></el-input>
+      </div>
+      <div id="destination-input-wrapper" class="form-item-wrapper">
+        <el-autocomplete
+          id="destination-input"
+          class="form-item"
+          v-model="task.destination"
+          :fetch-suggestions="querySearch"
+          placeholder="Destination"
+          @select="handleSelect"
+        ></el-autocomplete>
+      </div>
+      <div id="import-button-wrapper" class="form-item-wrapper">
+        <el-button
+          id="import-button"
+          type="primary"
+          class="form-item"
+          @click="createTask"
+          :disabled="importing"
+        >
+          Import
+          <i :class="importing ? 'el-icon-loading' : 'el-icon-download'"></i>
+        </el-button>
+      </div>
+    </div>
   </el-form>
 </template>
 
@@ -100,10 +114,40 @@ export default {
 </script>
 
 <style scoped>
-.form-container {
+.flex-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 50px;
+  flex-direction: column;
+  align-items: stretch;
+  padding: 20px;
+}
+
+.form-item-wrapper {
+  margin: 10px;
+}
+
+.form-item-wrapper,
+.form-item {
+  width: calc(100% - 10px);
+}
+
+@media only screen and (min-width: 600px) {
+  .flex-container {
+    max-width: 1000px;
+    margin: auto;
+    flex-direction: row;
+    align-items: center;
+    justify-items: flex-end;
+  }
+
+  #url-input-wrapper,
+  #destination-input-wrapper {
+    flex-grow: 4;
+    flex-shrink: 1;
+  }
+
+  #import-button-wrapper {
+    flex-grow: 0;
+    width: 300px;
+  }
 }
 </style>

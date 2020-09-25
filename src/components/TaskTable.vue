@@ -1,24 +1,24 @@
 <template>
   <el-container>
     <el-header>
-      <el-row>
-        <el-col :span="23">
-          <h1>Recent</h1>
-        </el-col>
-        <el-col id="button-column" :span="1">
-          <el-button
-            id="load-tasks"
-            @click="loadTasks"
-            :disabled="loading"
-            :icon="loading ? 'el-icon-loading' : 'el-icon-refresh'"
-            circle
-          ></el-button>
-        </el-col>
-      </el-row>
-      <h1>Recent</h1>
+      <div class="flex-container">
+        <h1>Recent</h1>
+
+        <el-button
+          id="load-tasks"
+          @click="loadTasks"
+          :disabled="loading"
+          :icon="loading ? 'el-icon-loading' : 'el-icon-refresh'"
+          circle
+        ></el-button>
+      </div>
     </el-header>
     <el-main>
-      <el-table class="table" :data="tableData" style="width: 100%; padding: 20px;">
+      <el-table
+        class="table"
+        :data="tableData"
+        style="width: 100%; padding: 20px"
+      >
         <el-table-column width="70" prop="status" label>
           <template slot-scope="scope">
             <TaskTableStatusTag :status="scope.row.status"></TaskTableStatusTag>
@@ -27,12 +27,19 @@
         <el-table-column prop="title" label="Title"></el-table-column>
         <el-table-column prop="url" label="Url">
           <template slot-scope="scope">
-            <el-link :href="scope.row.url" type="primary" target="_blank">{{scope.row.url}}</el-link>
+            <el-link :href="scope.row.url" type="primary" target="_blank">{{
+              scope.row.url
+            }}</el-link>
           </template>
         </el-table-column>
-        <el-table-column prop="destination" label="Destination"></el-table-column>
+        <el-table-column
+          prop="destination"
+          label="Destination"
+        ></el-table-column>
         <el-table-column prop="added" label="Added">
-          <template slot-scope="scope">{{moment(scope.row.added).format('YYYY-MM-D HH:mm:ss')}}</template>
+          <template slot-scope="scope">{{
+            moment(scope.row.added).format("YYYY-MM-D HH:mm:ss")
+          }}</template>
         </el-table-column>
       </el-table>
     </el-main>
@@ -113,8 +120,13 @@ export default {
   text-align: right;
 }
 
+.flex-container {
+  display: flex;
+  justify-content: space-between;
+}
+
 #load-tasks {
-  margin-top: 12px;
+  margin: 15px 0;
 }
 
 .table {
