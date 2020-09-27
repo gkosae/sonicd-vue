@@ -89,9 +89,10 @@ export default {
         api
           .fetchTasks()
           .then((tasks) => {
-            const taskIds = this.tasks.map((task) => task.id);
-            tasks = tasks.filter((task) => !taskIds.includes(task.id));
-            this.tasks.unshift(...tasks);
+            // const taskIds = this.tasks.map((task) => task.id);
+            // tasks = tasks.filter((task) => !taskIds.includes(task.id));
+            // this.tasks.unshift(...tasks);
+            this.tasks = tasks;
             resolve(tasks);
           })
           .catch((err) => reject(err))

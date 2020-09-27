@@ -11,6 +11,11 @@ export default {
   data() {
     return {
       tags: {
+        queued: {
+          type: "info",
+          icon: "el-icon-info",
+        },
+
         in_progress: {
           type: "warning",
           icon: "el-icon-loading",
