@@ -6,6 +6,7 @@
           id="url-input"
           class="form-item"
           v-model="task.url"
+          clearable="true"
           placeholder="Paste URL Here"
         ></el-input>
       </div>
@@ -15,6 +16,7 @@
           class="form-item"
           v-model="task.destination"
           :fetch-suggestions="querySearch"
+          clearable="true"
           placeholder="Destination"
           @select="handleSelect"
         ></el-autocomplete>
