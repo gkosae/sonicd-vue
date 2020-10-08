@@ -66,10 +66,17 @@ export default {
   },
   channels: {
     TasksChannel: {
-      connected() {},
-      disconnected() {},
-      rejected() {},
+      connected() {
+        console.log("Websocket connected");
+      },
+      disconnected() {
+        console.log("Websocket disconnected");
+      },
+      rejected() {
+        console.log("Websocket rejected");
+      },
       received({ message: { task } }) {
+        console.log("Websocket data received: ", task);
         this.addOrReplaceTask(task);
       },
     },
