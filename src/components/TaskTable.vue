@@ -52,9 +52,8 @@
 </template>
 
 <script>
-import api from "@/api";
-import EventBus from "@/services/eventBus";
 import TaskTableStatusTag from "@/components/TaskTableStatusTag";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "TaskTable",
@@ -62,16 +61,26 @@ export default {
   data() {
     return {
       reloading: false,
-      loadingTasks: false,
       tasks: [],
     };
   },
+  channels: {
+    TasksChannel: {
+      connected() {},
+      disconnected() {},
+      rejected() {},
+      received({ message: { task } }) {
+        this.addOrReplaceTask(task);
+      },
+    },
+  },
   methods: {
+    ...mapActions(["fetchTasks", "addOrReplaceTask"]),
     loadTasks() {
       console.log("Loading Tasks");
       this.reloading = true;
 
-      this.loadTasksSilently()
+      this.fetchTasks()
         .catch((err) =>
           this.$notify({
             title: "Error loading tasks",
@@ -80,44 +89,19 @@ export default {
         )
         .finally(() => (this.reloading = false));
     },
-    loadTasksSilently() {
-      console.log("Loading tasks silently");
-      return new Promise((resolve, reject) => {
-        if (this.loadingTasks) return;
-        this.loadingTasks = true;
-
-        api
-          .fetchTasks()
-          .then((tasks) => {
-            // const taskIds = this.tasks.map((task) => task.id);
-            // tasks = tasks.filter((task) => !taskIds.includes(task.id));
-            // this.tasks.unshift(...tasks);
-            this.tasks = tasks;
-            resolve(tasks);
-          })
-          .catch((err) => reject(err))
-          .finally(() => (this.loadingTasks = false));
-      });
-    },
   },
   mounted() {
     this.loadTasks();
 
-    setInterval(
-      function () {
-        this.loadTasksSilently();
-      }.bind(this),
-      30000
-    );
-  },
-  created() {
-    EventBus.$on("TASK_CREATED", (task) => {
-      this.tasks.unshift(task);
+    this.$cable.subscribe({
+      channel: "TasksChannel",
+      room: "public",
     });
   },
   computed: {
+    ...mapGetters(["allTasks"]),
     tableData() {
-      let data = this.tasks.map((task) => {
+      return this.allTasks.map((task) => {
         return {
           title: task.title,
           status: task.status,
@@ -126,8 +110,6 @@ export default {
           added: task.created_at,
         };
       });
-
-      return data;
     },
   },
 };

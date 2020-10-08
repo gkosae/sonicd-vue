@@ -6,7 +6,7 @@
           id="url-input"
           class="form-item"
           v-model="task.url"
-          clearable="true"
+          :clearable="true"
           placeholder="Paste URL Here"
         ></el-input>
       </div>
@@ -16,9 +16,8 @@
           class="form-item"
           v-model="task.destination"
           :fetch-suggestions="querySearch"
-          clearable="true"
+          :clearable="true"
           placeholder="Destination"
-          @select="handleSelect"
         ></el-autocomplete>
       </div>
       <div id="import-button-wrapper" class="form-item-wrapper">
@@ -26,7 +25,7 @@
           id="import-button"
           type="primary"
           class="form-item"
-          @click="createTask"
+          @click="addTask"
           :disabled="importing"
         >
           Import
@@ -38,8 +37,7 @@
 </template>
 
 <script>
-import api from "@/api";
-import EventBus from "@/services/eventBus";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "TaskForm",
@@ -49,39 +47,39 @@ export default {
         url: "",
         destination: "",
       },
-      destinations: [],
       importing: false,
     };
   },
+  computed: { ...mapGetters(["allDestinations"]) },
   methods: {
+    ...mapActions(["fetchDestinations", "createTask"]),
     querySearch(queryString, cb) {
-      let destinations = this.destinations.map((dest) => {
+      let results = this.filterDestinations(queryString).map((dest) => {
         return { value: dest };
       });
 
-      let results = queryString
-        ? destinations.filter((destination) => {
-            return (
-              destination.value
-                .toLowerCase()
-                .indexOf(queryString.toLowerCase()) === 0
-            );
-          })
-        : destinations;
       // call callback function to return suggestions
       cb(results);
     },
-    createTask() {
+    filterDestinations(queryString) {
+      let results = queryString
+        ? this.allDestinations.filter((destination) => {
+            return (
+              destination.toLowerCase().indexOf(queryString.toLowerCase()) === 0
+            );
+          })
+        : this.allDestinations;
+
+      return results;
+    },
+    addTask() {
       this.importing = true;
 
-      api
-        .createTask(this.task)
-        .then((task) => {
+      this.createTask(this.task)
+        .then(() => {
           this.$notify({
             title: "IMPORTING",
           });
-
-          EventBus.$emit("TASK_CREATED", task);
         })
         .catch((err) =>
           this.$notify({
@@ -90,22 +88,6 @@ export default {
           })
         )
         .finally(() => (this.importing = false));
-    },
-    fetchDestinations() {
-      api
-        .fetchDestinations()
-        .then((destinations) => {
-          this.destinations = destinations;
-        })
-        .catch((err) =>
-          this.$notify({
-            title: "Error fetching destinations",
-            message: err,
-          })
-        );
-    },
-    handleSelect(item) {
-      console.log(item);
     },
   },
   mounted() {

@@ -1,59 +1,59 @@
 import axios from "axios";
-import { CURRENT_API_URL } from "@/constants";
+import { API_URL } from "@/constants";
 
 export default {
   fetchTasks(page = 1) {
     return new Promise((resolve, reject) => {
       axios
-        .get(`${CURRENT_API_URL}/tasks?page=${page}`)
-        .then(res => {
+        .get(`${API_URL}/tasks?page=${page}`)
+        .then((res) => {
           if (res.data.success) {
-            resolve(res.data.tasks)
+            resolve(res.data.tasks);
           } else {
-            reject(res.data.error)
+            reject(res.data.error);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
-          reject(err)
-        })
-    })
+          reject(err);
+        });
+    });
   },
-  createTask({ url, destination }) {
+  addTask({ url, destination }) {
     return new Promise((resolve, reject) => {
       axios
-        .post(`${CURRENT_API_URL}/tasks`, {
+        .post(`${API_URL}/tasks`, {
           url: url,
-          destination_directory: destination
+          destination_directory: destination,
         })
-        .then(res => {
+        .then((res) => {
           if (res.data.success) {
-            resolve(res.data.task)
+            resolve(res.data.task);
           } else {
-            reject(res.data.error)
+            reject(res.data.error);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
-          reject(err)
-        })
-    })
+          reject(err);
+        });
+    });
   },
   fetchDestinations() {
     return new Promise((resolve, reject) => {
       axios
-        .get(`${CURRENT_API_URL}/destinations`)
-        .then(res => {
+        .get(`${API_URL}/destinations`)
+        .then((res) => {
           if (res.data.success) {
-            resolve(res.data.destinations)
+            resolve(res.data.destinations);
           } else {
-            reject(res.data.error)
+            reject(res.data.error);
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
-          reject(err)
-        })
-    })
+          reject(err);
+        });
+    });
   },
-}
+};
