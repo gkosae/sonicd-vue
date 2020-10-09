@@ -61,8 +61,12 @@ export default new Vuex.Store({
       state.tasks.unshift(task);
     },
     replaceTask(state, task) {
-      state.tasks = state.tasks.map((tsk) => {
-        return task.id === tsk.id ? task : tsk;
+      state.tasks = state.tasks.filter((tsk) => task.id != tsk.id);
+      state.tasks.unshift(task);
+      state.tasks.sort((a, b) => {
+        const aDate = new Date(a.created_at);
+        const bDate = new Date(b.created_at);
+        return bDate > aDate ? 1 : -1;
       });
     },
   },
