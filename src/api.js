@@ -1,11 +1,11 @@
 import axios from "axios";
-import { API_URL } from "@/constants";
+import { API_BASE } from "@/constants";
 
 export default {
   fetchTasks(page = 1) {
     return new Promise((resolve, reject) => {
       axios
-        .get(`${API_URL}/tasks?page=${page}`)
+        .get(`${API_BASE}/tasks?page=${page}`)
         .then((res) => {
           if (res.data.success) {
             resolve(res.data.tasks);
@@ -22,7 +22,7 @@ export default {
   addTask({ url, destination }) {
     return new Promise((resolve, reject) => {
       axios
-        .post(`${API_URL}/tasks`, {
+        .post(`${API_BASE}/tasks`, {
           url: url,
           destination_directory: destination,
         })
@@ -42,7 +42,7 @@ export default {
   fetchDestinations() {
     return new Promise((resolve, reject) => {
       axios
-        .get(`${API_URL}/destinations`)
+        .get(`${API_BASE}/destinations`)
         .then((res) => {
           if (res.data.success) {
             resolve(res.data.destinations);
