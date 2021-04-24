@@ -64,9 +64,9 @@ export default {
     filterDestinations(queryString) {
       let results = queryString
         ? this.allDestinations.filter((destination) => {
-            return (
-              destination.toLowerCase().indexOf(queryString.toLowerCase()) === 0
-            );
+            return destination
+              .toLowerCase()
+              .includes(queryString.toLowerCase());
           })
         : this.allDestinations;
 
